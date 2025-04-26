@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoVerse Creator | Web3 Idea Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #0a0a1f;
+            color: #00ff9d;
+        }
+        .cyber-border {
+            border: 2px solid #00ff9d;
+            box-shadow: 0 0 15px #00ff9d33;
+        }
+        .cyber-button {
+            background: transparent;
+            border: 2px solid #00ff9d;
+            color: #00ff9d;
+            transition: all 0.3s;
+        }
+        .cyber-button:hover {
+            background: #00ff9d;
+            color: #0a0a1f;
+            box-shadow: 0 0 20px #00ff9d;
+        }
+        .neon-text {
+            text-shadow: 0 0 10px #00ff9d;
+        }
+        .heading-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .idea-card {
+            background: rgba(0, 255, 157, 0.05);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="heading-font text-4xl md:text-6xl font-bold mb-4 neon-text">CryptoVerse Creator</h1>
+            <p class="text-xl opacity-80">Generate Your Next Web3 Innovation</p>
+        </header>
+
+        <!-- Wallet Connection -->
+        <div class="mb-8 text-center">
+            <button id="connectWallet" class="cyber-button px-6 py-3 rounded-lg heading-font text-lg">
+                <i class="bi bi-wallet2"></i> Connect Wallet
+            </button>
+            <p id="walletAddress" class="mt-2 text-sm"></p>
+        </div>
+
+        <!-- Generator Section -->
+        <div class="cyber-border rounded-xl p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block mb-2 heading-font">Primary Focus</label>
+                    <select id="focus" class="w-full bg-transparent cyber-border rounded p-2">
+                        <option value="photo">Photo Sharing</option>
+                        <option value="video">Short Videos</option>
+                        <option value="challenge">Mini Challenges</option>
+                        <option value="art">Digital Art</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 heading-font">Reward Type</label>
+                    <select id="reward" class="w-full bg-transparent cyber-border rounded p-2">
+                        <option value="token">Tokens</option>
+                        <option value="nft">NFTs</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+            </div>
+            <button id="generate" class="cyber-button w-full py-4 rounded-lg heading-font text-xl">
+                Generate Idea <i class="bi bi-lightning-charge"></i>
+            </button>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result" class="idea-card rounded-xl p-6 hidden">
+            <h2 id="appName" class="heading-font text-2xl mb-4 neon-text"></h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="heading-font mb-2">Concept:</h3>
+                    <p id="concept"></p>
+                </div>
+                <div>
+                    <h3 class="heading-font mb-2">User Flow:</h3>
+                    <ul id="userFlow" class="list-disc pl-6"></ul>
+                </div>
+                <div>
+                    <h3 class="heading-font mb-2">Token Economy:</h3>
+                    <p id="tokenEconomy"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isWalletConnected = false;
+
+        // Wallet Connection
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const address = accounts[0];
+                    document.getElementById('walletAddress').textContent = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+                    document.getElementById('connectWallet').innerHTML = '<i class="bi bi-wallet2"></i> Connected';
+                    isWalletConnected = true;
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                alert('Please install MetaMask!');
+            }
+        });
+
+        // Idea Generation
+        const appNames = {
+            photo: ['PixelChain', 'CryptoSnap', 'BlockShot'],
+            video: ['Web3Reels', 'ChainClips', 'CryptoTok'],
+            challenge: ['QuestCoin', 'CryptoQuest', 'ChainChallenge'],
+            art: ['ArtBlock', 'NFTCanvas', 'CryptoCreate']
+        };
+
+        const concepts = {
+            photo: 'A decentralized photo-sharing platform where every share earns tokens',
+            video: 'Short-form video platform with crypto rewards for creators and engagers',
+            challenge: 'Daily challenges platform with token rewards and NFT achievements',
+            art: 'Digital art creation platform with built-in NFT minting capabilities'
+        };
+
+        document.getElementById('generate').addEventListener('click', () => {
+            if (!isWalletConnected) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+
+            const focus = document.getElementById('focus').value;
+            const reward = document.getElementById('reward').value;
+
+            // Generate random app name
+            const randomName = appNames[focus][Math.floor(Math.random() * appNames[focus].length)];
+            
+            document.getElementById('appName').textContent = randomName;
+            document.getElementById('concept').textContent = concepts[focus];
+            
+            // Generate user flow
+            const userFlow = document.getElementById('userFlow');
+            userFlow.innerHTML = `
+                <li>Connect wallet and create profile</li>
+                <li>Complete daily tasks (${focus === 'photo' ? 'upload photos' : focus === 'video' ? 'share videos' : focus === 'art' ? 'create artwork' : 'solve challenges'})</li>
+                <li>Earn points and climb the leaderboard</li>
+                <li>Receive ${reward === 'token' ? 'tokens' : reward === 'nft' ? 'NFTs' : 'tokens and NFTs'} as rewards</li>
+                <li>Trade or showcase your earnings</li>
+            `;
+
+            // Generate token economy
+            document.getElementById('tokenEconomy').textContent = `Users earn ${reward === 'token' ? 'VERSE tokens' : reward === 'nft' ? 'unique NFTs' : 'both VERSE tokens and NFTs'} for daily participation. Higher engagement leads to multiplier effects. Special achievements unlock rare rewards.`;
+
+            document.getElementById('result').classList.remove('hidden');
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
